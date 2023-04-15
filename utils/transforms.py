@@ -1,11 +1,8 @@
-import utils.reader as reader
-import utils.notes as notes
-from json import dumps
-
+import scipy.signal as signal
 from scipy.fft import fft, ifft
-from scipy import signal
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+import utils.reader as reader
 
 
 def get_spectrogram(file: str, plot: bool = True):
@@ -70,6 +67,7 @@ def analyze_peaks(f, t, spectrogram, plot: bool = True):
     # Find the peaks along the frequency axis
     peak_indices, _ = signal.find_peaks(spectrum.max(axis=1), height=0.001)
 
+    # log-scale spectrogram
     db_spectrum = 10 * np.log10(spectrum)
 
     # Plot the spectrogram and the peaks
@@ -83,24 +81,7 @@ def analyze_peaks(f, t, spectrogram, plot: bool = True):
     for i in peak_indices:
         peaks.append(f[i])
 
-    return peaks
-
-
-if __name__ == '__main__':
-    ftable = notes.frequencies()
-    print(dumps(ftable, indent=4))
-
-    freqs, time, spectrogram = get_spectrogram(
-        'data/sample.wav', plot=False)
-    peaks = analyze_peaks(freqs, time, spectrogram, plot=True)
-
-    # Cut off peaks above 7902Hz (B8)
+    # Cut off peaks above 7902Hz (B8 note)
     peaks = [np.round(p, 2) for p in peaks if p <= 7902]
-    print(peaks)
 
-    # TODO: Map frequencies to their respective note
-    # ...
-
-    with open('peaks.txt', 'w') as f:
-        for freq in peaks:
-            f.write(f'{freq}\n')
+    return peaks

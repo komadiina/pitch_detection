@@ -1,0 +1,5 @@
+Detected frequency peaks [Hz]:
+-> 	242.25
+
+Approximated notes:
+-> 	B
